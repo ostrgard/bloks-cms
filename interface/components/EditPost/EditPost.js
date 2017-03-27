@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import axios from 'axios';
+import superagent from 'superagent';
 
 export default class EditPost extends Component {
   static propTypes = {
@@ -10,18 +10,20 @@ export default class EditPost extends Component {
     const slug = this.slugInput.value;
     const title = this.titleInput.value;
 
-    axios.post(
-      'http://localhost:3000/post/update/',
-      {
+    superagent
+      .post('http://localhost:3000/post/update/')
+      .send({
         id: this.props.post._id,
         slug: slug,
         title: title
-      }
-    ).then(() => {
-      console.log('saved');
-    }).catch((error) => {
-      console.log(error);
-    });
+      })
+      .end((err, res) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log('saved: ', res);
+        }
+      });
   }
 
   render() {
