@@ -1,7 +1,7 @@
 const Koa = require('koa');
 const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
-const cors = require('koa-cors');
+const cors = require('kcors');
 const mongoose = require('mongoose');
 
 const postCreate = require('./post/create');
@@ -16,6 +16,13 @@ const app = new Koa();
 const router = new Router();
 app.use(bodyParser());
 app.use(cors());
+
+app.use(async (ctx, next) => {
+  const start = new Date();
+  await next();
+  const ms = new Date() - start;
+  ctx.set('X-Response-Time', `${ms}ms`);
+});
 
 router.post('/post/create/', postCreate);
 router.get('/post/get/*', postGet);

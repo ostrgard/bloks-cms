@@ -30,6 +30,16 @@ async function getPathname(currentPost, pathname = '') {
   return newPathname;
 }
 
+async function updateChildren(id) {
+  const posts = await Post.find({ parent: id }).exec();
+
+  posts.forEach(async post => {
+    post.pathname = await getPathname(post);
+    await post.save();
+    await updateChildren(post._id.toString());
+  });
+}
+
 export default async ctx => {
   const body = ctx.request.body;
 
@@ -73,6 +83,7 @@ export default async ctx => {
       post.slug = await getSlug(post.slug, post.parent, post._id.toString());
       post.pathname = await getPathname(post);
       await post.save();
+      await updateChildren(post._id.toString());
       ctx.body = post;
     }
   }
