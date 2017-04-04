@@ -3,6 +3,7 @@ import { asyncConnect } from 'redux-connect';
 import { connect } from 'react-redux';
 import { loadPosts } from 'redux/modules/posts';
 import PostList from 'components/PostList/PostList';
+import CreatePost from 'components/CreatePost/CreatePost';
 
 @asyncConnect([{
   promise: ({ store }) => {
@@ -26,7 +27,10 @@ export default class Posts extends Component {
     } = this.props;
 
     return (
-      <PostList posts={posts} />
+      <div>
+        <PostList posts={posts} />
+        <CreatePost />
+      </div>
     );
   }
 }
