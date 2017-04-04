@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import superagent from 'superagent';
+import { browserHistory } from 'react-router';
 
 export default class EditPost extends Component {
   static propTypes = {
@@ -22,6 +23,7 @@ export default class EditPost extends Component {
           console.log(err);
         } else {
           console.log('saved: ', res);
+          browserHistory.replace('/edit' + res.body.pathname);
         }
       });
   }
