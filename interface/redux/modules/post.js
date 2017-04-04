@@ -38,5 +38,5 @@ export default (
 
 export const loadPost = pathname => ({
   types: [POST_LOAD, POST_LOAD_SUCCESS, POST_LOAD_FAIL],
-  promise: (client) => client.get(`http://localhost:3000/post/get/${pathname}`)
+  promise: (client) => client.get(`http://localhost:3000/post/get/${pathname}/`)
 });
