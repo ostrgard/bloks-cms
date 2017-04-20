@@ -1,15 +1,20 @@
-const Koa = require('koa');
-const Router = require('koa-router');
-const bodyParser = require('koa-bodyparser');
-const cors = require('kcors');
-const mongoose = require('mongoose');
+import Koa from 'koa';
+import Router from 'koa-router';
+import bodyParser from 'koa-bodyparser';
+import cors from 'kcors';
+import mongoose from 'mongoose';
 
-const postCreate = require('./post/create');
-const postGet = require('./post/get');
-const postUpdate = require('./post/update');
-const postsGet = require('./posts/get');
+import postCreate from './post/create';
+import postGet from './post/get';
+import postUpdate from './post/update';
+import postsGet from './posts/get';
 
-mongoose.connect('mongodb://localhost/bloks-cms-test1');
+const port = 3000;
+const host = 'localhost';
+const url = port === 80 || port === 443 ? `http://${host}` : `http://${host}:${port}`;
+const mongodb = process.env.NODE_ENV === 'test' ? 'bloks-cms-test' : 'bloks-cms';
+
+mongoose.connect('mongodb://localhost/' + mongodb);
 mongoose.Promise = global.Promise;
 
 const app = new Koa();
@@ -33,6 +38,8 @@ app
   .use(router.routes())
   .use(router.allowedMethods());
 
-app.listen(3000);
+app.listen(port);
 
-console.info('==> 💻  http://localhost:3000 is waiting for requests and is syncing.');
+console.info(`==> 💻  ${url} is waiting for requests and is syncing.`);
+
+export default url;

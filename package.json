@@ -8,7 +8,8 @@
     "start": "concurrent --kill-others \"better-npm-run start-prod\" \"better-npm-run start-api-prod\"",
     "dev": "concurrent --kill-others \"better-npm-run watch-client\" \"better-npm-run start-dev\"",
     "dev-api": "better-npm-run start-api-dev",
-    "lint": "eslint -c .eslintrc interface; eslint -c .eslintrc api"
+    "lint": "eslint -c .eslintrc interface; eslint -c .eslintrc api",
+    "test-api": "NODE_ENV='test' ./node_modules/mocha/bin/mocha $(find api -name '*.test.js') --compilers js:babel-core/register || true"
   },
   "betterScripts": {
     "start-prod": {
@@ -73,6 +74,8 @@
     "babel-runtime": "~5.8.29",
     "better-npm-run": "^0.0.4",
     "body-parser": "^1.15.2",
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
     "clean-webpack-plugin": "^0.1.6",
     "compression": "^1.6.0",
     "concurrently": "^0.1.1",
@@ -90,6 +93,7 @@
     "kcors": "^2.2.1",
     "koa": "^2.2.0",
     "koa-router": "^7.1.1",
+    "mocha": "^3.2.0",
     "mongoose": "^4.8.5",
     "node-sass": "^4.5.0",
     "nodemon": "^1.11.0",
@@ -110,7 +114,7 @@
     "serve-favicon": "^2.3.0",
     "strip-loader": "^0.1.0",
     "style-loader": "^0.13.0",
-    "superagent": "^1.4.0",
+    "superagent": "^3.2.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.14.0",
     "webpack-dev-middleware": "^1.4.0",
