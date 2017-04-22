@@ -12,7 +12,7 @@ describe('Create post', () => {
     await Post.remove();
   });
 
-  it('It should return the newly created post', async () => {
+  it('Should return a newly created post', async () => {
     const newPost = await chai.request(server).post('/post/create/');
     newPost.should.have.status(200);
     newPost.should.have.property('body');

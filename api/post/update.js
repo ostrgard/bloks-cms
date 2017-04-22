@@ -1,11 +1,12 @@
 import Post from '../models/Post';
+import mongoose from 'mongoose';
 
 // Recursively checks if a slug is unique for the given parent post.
-async function getSlug(s, parent, id, index = 0) {
+async function getSlug(s, parent, id, index = 1) {
   // Sanitize the slug
   const slug = s.toLowerCase().replace(/[^a-z0-9]/g, '-');
   // If not the first iteration, add or increment the postfixed index.
-  let newSlug = index === 0 ? slug : `${slug}-${index}`;
+  let newSlug = index === 1 ? slug : `${slug}-${index}`;
   // Query for a post matching the slug we're trying to use.
   const post = await Post.findOne({ parent: parent, slug: newSlug }).exec();
 
@@ -43,9 +44,8 @@ async function updateChildren(id) {
 export default async ctx => {
   const body = ctx.request.body;
 
-  if (!body.id) {
-    ctx.status = 500;
-    ctx.body = 'No post id provided.';
+  if (!body.id || !mongoose.Types.ObjectId.isValid(body.id)) {
+    ctx.status = 404;
   } else {
     const post = await Post.findOne({ _id: body.id }).exec();
 
