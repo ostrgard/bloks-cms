@@ -19,7 +19,12 @@ export default class PostList extends Component {
             <a href={`/edit${post.pathname}`}>
               {post.title || post._id}
             </a>
-            - {post._id} - {post.pathname}
+            <span style={{ fontSize: 8 }}> - {post.pathname} - {post._id}</span>
+            {post.children && (
+              <div style={{ marginLeft: 20 }}>
+                <PostList posts={post.children} />
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -30,4 +30,29 @@ describe('Get posts', () => {
     posts.should.have.property('body');
     posts.body.should.have.lengthOf(3);
   });
+
+  it('Should should nest children', async () => {
+    const parent = await chai.request(server).post('/post/create/');
+
+    await chai.request(server).post('/post/update/').send({
+      id: parent.body._id,
+      parent: (await chai.request(server).post('/post/create/')).body._id
+    });
+
+    await chai.request(server).post('/post/update/').send({
+      id: (await chai.request(server).post('/post/create/')).body._id,
+      parent: parent.body._id
+    });
+
+    await chai.request(server).post('/post/update/').send({
+      id: (await chai.request(server).post('/post/create/')).body._id,
+      parent: parent.body._id
+    });
+
+    const posts = await chai.request(server).get('/posts/');
+    posts.should.have.status(200);
+    posts.body.should.have.lengthOf(1);
+    posts.body[0].children.should.have.lengthOf(1);
+    posts.body[0].children[0].children.should.have.lengthOf(2);
+  });
 });

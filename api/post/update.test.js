@@ -136,4 +136,52 @@ describe('Update post', () => {
     post.should.have.property('body');
     post.body.title.should.equal('Bar');
   });
+
+  it('Should not allow making a post a child of it\'s children recursivly', async () => {
+    let parent = await chai.request(server).post('/post/create/');
+    const child = await chai.request(server).post('/post/create/');
+    const child2 = await chai.request(server).post('/post/create/');
+
+    await chai.request(server).post('/post/update/').send({
+      id: child.body._id,
+      parent: parent.body._id
+    });
+
+    await chai.request(server).post('/post/update/').send({
+      id: child2.body._id,
+      parent: parent.body._id
+    });
+
+    parent = await chai.request(server).post('/post/update/').send({
+      id: parent.body._id,
+      parent: child2.body._id
+    });
+
+    parent.should.have.status(200);
+    parent.should.have.property('body');
+    parent.body.should.not.have.property('parent');
+  });
+
+  it('Should be able to unset a parent', async () => {
+    const parent = await chai.request(server).post('/post/create/');
+    let child = await chai.request(server).post('/post/create/');
+
+    child = await chai.request(server).post('/post/update/').send({
+      id: child.body._id,
+      parent: parent.body._id
+    });
+
+    child.should.have.status(200);
+    child.should.have.property('body');
+    child.body.should.have.property('parent');
+
+    child = await chai.request(server).post('/post/update/').send({
+      id: child.body._id,
+      parent: 'unset'
+    });
+
+    child.should.have.status(200);
+    child.should.have.property('body');
+    child.body.should.not.have.property('parent');
+  });
 });

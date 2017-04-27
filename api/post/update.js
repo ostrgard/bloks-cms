@@ -41,6 +41,18 @@ async function updateChildren(id) {
   });
 }
 
+async function isParentChildOfThis(parent, child) {
+  const post = await Post.findOne({ _id: parent }).exec();
+
+  if (post._id.toString() === child) {
+    return true;
+  } else if (!post.parent) {
+    return false;
+  }
+
+  return await isParentChildOfThis(post.parent, child);
+}
+
 export default async ctx => {
   const body = ctx.request.body;
 
@@ -76,8 +88,12 @@ export default async ctx => {
       }
 
       // Set new parent, if parent is provided.
-      if (body.parent && body.parent !== id) {
+      if (body.parent !== 'unset' && body.parent && body.parent !== id && !(await isParentChildOfThis(body.parent, id))) {
         post.parent = body.parent;
+      }
+
+      if (body.parent === 'unset') {
+        post.parent = undefined;
       }
 
       post.slug = await getSlug(post.slug, post.parent, post._id.toString());
