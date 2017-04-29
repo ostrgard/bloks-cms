@@ -10,7 +10,7 @@ export default class EditPost extends Component {
 
   getParentOptions(posts = [], id, indent = 0) {
     return posts
-      .filter(n => n._id !== id)
+      .filter(n => n._id !== id && !n.root)
       .reduce((pre, cur) => pre.concat({ ...cur, indent }, this.getParentOptions(cur.children, id, indent + 1)), []);
   }
 
@@ -28,8 +28,6 @@ export default class EditPost extends Component {
     const slug = this.slugInput.value;
     const title = this.titleInput.value;
     const parent = this.parentInput.value;
-
-    console.log(parent);
 
     superagent
       .post('http://localhost:3000/post/update/')
@@ -61,14 +59,17 @@ export default class EditPost extends Component {
         <div>
           <input ref={ref => this.titleInput = ref} defaultValue={post.title} />
         </div>
+        {!post.root && (
         <div>
           {post.pathname.replace(`${post.slug}/`, '')}<input ref={ref => this.slugInput = ref} defaultValue={post.slug} />
         </div>
-        <select defaultValue={post.parent} ref={ref => this.parentInput = ref}>
-          <option value="unset">No parent</option>
-          {posts
-            .map(n => <option key={n._id} value={n._id}>{this.getIndentDashes(n.indent)} {n.title}</option>)}
-        </select>
+        )}
+        {!post.root && (
+          <select defaultValue={post.parent} ref={ref => this.parentInput = ref}>
+            <option value="unset">Root</option>
+            {posts.map(n => <option key={n._id} value={n._id}>{this.getIndentDashes(n.indent)} {n.title}</option>)}
+          </select>
+        )}
         <button onClick={this.saveChanges}>Save changes</button>
       </div>
     );

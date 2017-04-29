@@ -39,17 +39,28 @@ describe('Update post', () => {
     }
   });
 
-  it('Should update title as well as slug, if slug have not been set.', async () => {
-    const newPost = await chai.request(server).post('/post/update/').send({
+  it('Should update title as well as slug, if slug have not been set - unless root.', async () => {
+    const post1 = await chai.request(server).post('/post/update/').send({
       id: (await chai.request(server).post('/post/create/')).body._id,
-      title: 'Foo Bar'
+      title: 'Foo'
     });
 
-    newPost.should.have.status(200);
-    newPost.should.have.property('body');
-    newPost.body.title.should.equal('Foo Bar');
-    newPost.body.slug.should.equal('foo-bar');
-    newPost.body.pathname.should.equal('/foo-bar/');
+    post1.should.have.status(200);
+    post1.should.have.property('body');
+    post1.body.title.should.equal('Foo');
+    post1.body.slug.should.equal('foo');
+    post1.body.pathname.should.equal('/');
+
+    const post2 = await chai.request(server).post('/post/update/').send({
+      id: (await chai.request(server).post('/post/create/')).body._id,
+      title: 'Bar'
+    });
+
+    post2.should.have.status(200);
+    post2.should.have.property('body');
+    post2.body.title.should.equal('Bar');
+    post2.body.slug.should.equal('bar');
+    post2.body.pathname.should.equal('/bar/');
   });
 
   it('Should update slug and mutate to unique slug per parent, but prepending and incremending index.', async () => {

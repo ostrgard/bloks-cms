@@ -4,6 +4,7 @@ const PostSchema = new Schema({
   title: String,
   slug: String,
   pathname: String,
+  root: Boolean,
   modules: [{
     type: Schema.Types.ObjectId,
     ref: 'Module'

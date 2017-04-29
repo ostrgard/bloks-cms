@@ -13,12 +13,23 @@ describe('Create post', () => {
   });
 
   it('Should return a newly created post', async () => {
-    const newPost = await chai.request(server).post('/post/create/');
-    newPost.should.have.status(200);
-    newPost.should.have.property('body');
-    newPost.body.should.have.property('_id');
-    newPost.body.should.have.property('slug');
-    newPost.body.should.have.property('title').eql(newPost.body._id);
-    newPost.body.should.have.property('pathname').eql(`/${newPost.body._id}/`);
+    const post = await chai.request(server).post('/post/create/');
+    post.should.have.status(200);
+    post.should.have.property('body');
+    post.body.should.have.property('_id');
+    post.body.should.have.property('slug');
+  });
+
+  it('First post created should have pathname "/" and root true', async () => {
+    const post1 = await chai.request(server).post('/post/create/');
+    post1.should.have.status(200);
+    post1.should.have.property('body');
+    post1.body.root.should.be.true; // eslint-disable-line
+    post1.body.should.have.property('pathname').eql(`/`);
+
+    const post2 = await chai.request(server).post('/post/create/');
+    post2.should.have.status(200);
+    post2.should.have.property('body');
+    post2.body.should.have.property('pathname').eql(`/${post2.body._id}/`);
   });
 });

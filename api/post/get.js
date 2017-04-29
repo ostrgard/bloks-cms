@@ -1,7 +1,7 @@
 import Post from '../models/Post';
 
 export default async ctx => {
-  const pathname = `/${ctx.params[0]}`;
+  const pathname = `/${ctx.params[0]}`.replace(/\/\//, '/');
   const post = await Post.findOne({ pathname }).exec();
 
   if (!post) {

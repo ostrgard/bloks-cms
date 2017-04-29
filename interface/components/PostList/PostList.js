@@ -14,9 +14,12 @@ export default class PostList extends Component {
 
     return (
       <div>
-        {posts.map((post, index) =>
-          <div key={index}>
-            <a href={`/edit${post.pathname}`}>
+        {posts.map(post =>
+          <div
+            key={post._id}
+            style={{ marginLeft: !post.parent && !post.root ? 20 : 0 }}
+          >
+            <a href={`/edit/post${post.pathname}`}>
               {post.title || post._id}
             </a>
             <span style={{ fontSize: 8 }}> - {post.pathname} - {post._id}</span>

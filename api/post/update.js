@@ -4,7 +4,12 @@ import mongoose from 'mongoose';
 // Recursively checks if a slug is unique for the given parent post.
 async function getSlug(s, parent, id, index = 1) {
   // Sanitize the slug
-  const slug = s.toLowerCase().replace(/[^a-z0-9]/g, '-');
+  const slug = s
+    .toLowerCase()
+    .replace(/ø/gi, 'oe')
+    .replace(/æ/gi, 'ae')
+    .replace(/å/gi, 'aa')
+    .replace(/[^a-z0-9]/g, '-');
   // If not the first iteration, add or increment the postfixed index.
   let newSlug = index === 1 ? slug : `${slug}-${index}`;
   // Query for a post matching the slug we're trying to use.
@@ -97,7 +102,7 @@ export default async ctx => {
       }
 
       post.slug = await getSlug(post.slug, post.parent, post._id.toString());
-      post.pathname = await getPathname(post);
+      post.pathname = post.root ? '/' : await getPathname(post);
       await post.save();
       await updateChildren(post._id.toString());
       ctx.body = post;
